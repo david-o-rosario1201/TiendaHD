@@ -1,0 +1,73 @@
+﻿@page "/Gastos_Adminstractivos"
+@using TiendaHD.Models
+@inject NavigationManager navigation
+@inject GastosADMServices gastosADMServices
+@rendermode InteractiveServer
+
+<div class="container">
+    <div class="card-header">
+        <h2>Gastos Administrativos</h2>
+        <button class="btn btn-danger" @onclick= "IrACrear">➕ Agregar</button>
+    </div>
+
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th>Valor</th>
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var gasto in gastosADM)
+            {
+                <tr>
+                    <td>@gasto.GastosADMName</td>
+                    <td>RD$@gasto.ValorGastoADM.ToString("N2")</td>
+                    <td>
+                        <button class="btn btn-secondary">👁️</button>
+                        <button class="btn btn-primary">✏️</button>
+                        <button class="btn btn-danger" @onclick="() => EliminarGasto(gasto.GastosADMId)">🗑️</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+    <div class="card-header">
+        <div class="text-center">
+            <strong>Total Gastos Administrativos</strong>
+            <h3 class="text-danger">RD$@TotalGastos.ToString("N2")</h3>
+        </div>
+    </div>
+
+
+
+</div>
+
+@code {
+
+    public List<GastosADM> gastosADM = new List<GastosADM>();
+    public bool loading { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+        gastosADM = await gastosADMServices.Listar(e => true);
+
+        loading = false;
+
+        if (gastosADM.Count == 0)
+            StateHasChanged();
+    }
+
+    private float TotalGastos => gastosADM.Sum(g => g.ValorGastoADM);
+
+    public void EliminarGasto(int Id) { }
+
+    public void IrACrear()
+    {
+        navigation.NavigateTo("/CreateGastosAdminstractivos");
+    }
+}

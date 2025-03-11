@@ -11,6 +11,5 @@ public class Contexto : DbContext
     }
 
     public DbSet<Financiamientos> Financiamientos { get; set; }
-
-    public DbSet<Empleados> Empleados { get; set; }
+    public DbSet<GastosADM> GastosADM { get; set; }
 }
