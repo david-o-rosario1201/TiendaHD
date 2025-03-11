@@ -1,0 +1,117 @@
+﻿@page "/Empleados"
+@rendermode InteractiveServer
+@inject NavigationManager navigation
+@inject EmpleadoService empleadoService
+
+<PageTitle>Empleados</PageTitle>
+<div class="container">
+	<div class="card shadow-lg">
+		@*Header*@
+		<div class="card-header d-flex justify-content-between align-items-center">
+			<h1 class="mb-0"><strong>Empleados</strong></h1>
+			<button type="button" class="btn btn-outline-danger d-flex align-items-center" @onclick="IrACrear">
+				<i class="bi bi-plus-circle me-2"></i> Agregar
+			</button>
+		</div>
+		@*Body*@
+		<div class="card-body">
+			@if (loading)
+			{
+				<div class="d-flex justify-content-center">
+					<div class="spinner-border text-info">
+					</div>
+				</div>
+			}
+			else if (empleados.Count == 0)
+			{
+				<h1 class="miMensaje text-center"><i class="bi bi-exclamation-triangle" /> No hay empleados creados</h1>
+			}
+			else
+			{
+				<table class="table table-bordered miTabla">
+					<thead class="table-dark">
+						<tr>
+							<th>Nombre</th>
+							<th>Puesto</th>
+							<th>Salario</th>
+							<th>Opciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var empleado in empleados)
+						{
+							<tr>
+								<td>@empleado.Nombre</td>
+								<td>@empleado.Puesto</td>
+								<td>RD$ @empleado.Salario.ToString("N2")</td>
+								<td>
+									<div class="btn-group" role="group">
+										<button type="button" class="btn btn-outline-info" @onclick="()=> IrADetalles(empleado.EmpleadoId)" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles">
+											<i class="bi bi-eye"></i>
+										</button>
+
+										<button type="button" class="btn btn-outline-warning" @onclick="()=> IrAEditar(empleado.EmpleadoId)" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
+											<i class="bi bi-pencil-square"></i>
+										</button>
+										<button type="button" class="btn btn-outline-danger" @onclick="()=> IrAEliminar(empleado.EmpleadoId)" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
+											<i class="bi bi-trash3-fill"></i>
+										</button>
+									</div>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+		</div>
+		@*Footer*@
+		<div class="card-footer">
+			<p><strong>Total de Empleados:</strong> @empleados.Count</p>
+		</div>
+
+		@*Total de Pagos*@
+		<div class="d-flex justify-content-center">
+			<div class="total-empleados-container">
+				<h4 class="fw-bold text-danger">Total Pago de Empleados</h4>
+				<h3 class="fw-bold">RD$ @(empleados.Sum(e => e.Salario).ToString("N2"))</h3>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	public List<Empleados> empleados = new List<Empleados>();
+	public string mensaje { get; set; }
+	public bool loading { get; set; } = true;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+		empleados = await empleadoService.Listar(e => true);
+
+		loading = false;
+
+		if (empleados.Count == 0)
+			StateHasChanged();
+	}
+
+	public void IrACrear()
+	{
+		navigation.NavigateTo("/CreateEmpleados");
+	}
+
+	public void IrADetalles(int id)
+	{
+		navigation.NavigateTo($"/ViewEmpleados/empleadoId={id}");
+	}
+
+	public void IrAEditar(int id)
+	{
+		navigation.NavigateTo($"/EditEmpleados/empleadoId={id}");
+	}
+
+	public void IrAEliminar(int id)
+	{
+		navigation.NavigateTo($"/DeleteEmpleados/empleadoId={id}");
+	}
+}
