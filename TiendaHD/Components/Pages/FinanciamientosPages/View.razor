@@ -1,0 +1,48 @@
+﻿@page "/ViewFinanciamientos"
+@page "/ViewFinanciamientos/financiamientoId={financiamientoId:int}"
+@rendermode InteractiveServer
+@inject NavigationManager navigation
+@inject FinanciamientoService financiamientoService
+
+<PageTitle>Detalles del Financiamiento</PageTitle>
+<div class="container">
+	<div class="card shadow-lg">
+		@*Header*@
+		<div class="card-header">
+			<h3 class="text-center"><strong>Detalles del Financiamiento</strong></h3>
+		</div>
+		@*Body*@
+		<div class="card-body">
+			@*Datos*@
+			<ul>
+				<li><strong>Detalle:</strong> @financiamiento.Detalle</li>
+				<li><strong>Cuota Mensual:</strong> RD$ @financiamiento.CuotaMensual.ToString("N2")</li>
+			</ul>
+		</div>
+		@*Footer*@
+		<div class="card-footer d-flex justify-content-center">
+			<div class="px-2">
+				<button type="button" class="btn btn-outline-danger" @onclick="Volver"><i class="bi bi-box-arrow-left" /> Volver</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@code {
+	[Parameter]
+	public int financiamientoId { get; set; }
+
+	public Financiamientos financiamiento { get; set; } = new Financiamientos();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+		financiamiento = await financiamientoService.Buscar(financiamientoId);
+	}
+
+	void Volver()
+	{
+		navigation.NavigateTo("/Financiamientos");
+	}
+}

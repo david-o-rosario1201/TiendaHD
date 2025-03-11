@@ -1,16 +1,17 @@
-﻿@page "/CreateFinanciamientos"
+﻿@page "/EditFinanciamientos"
+@page "/EditFinanciamientos/financiamientoId={financiamientoId:int}"
 @rendermode InteractiveServer
 @inject NavigationManager navigation
 @inject FinanciamientoService financiamientoService
 
-<PageTitle>Crear Nuevo Financiamiento</PageTitle>
-<EditForm Model="financiamiento" OnValidSubmit="Crear">
+<PageTitle>Editar Financiamiento</PageTitle>
+<EditForm Model="financiamiento" OnValidSubmit="Editar">
 	<DataAnnotationsValidator />
 	<div class="container">
 		<div class="card shadow-lg">
 			@*Header*@
 			<div class="card-header">
-				<h3 class="text-center"><strong>Crear Nuevo Financiamiento</strong></h3>
+				<h3 class="text-center"><strong>Modificar Financiamiento</strong></h3>
 			</div>
 			@*Body*@
 			<div class="card-body">
@@ -33,7 +34,7 @@
 				<div class="px-2">
 					<button type="button" class="btn btn-outline-danger" @onclick="Volver"><i class="bi bi-box-arrow-left" /> Volver</button>
 				</div>
-				<button type="submit" class="btn btn-outline-dark"><i class="bi bi-floppy-fill" /> Crear</button>
+				<button type="submit" class="btn btn-outline-dark"><i class="bi bi-floppy-fill" /> Modificar</button>
 			</div>
 		</div>
 	</div>
@@ -41,9 +42,18 @@
 
 
 @code {
+	[Parameter]
+	public int financiamientoId { get; set; }
+
 	public Financiamientos financiamiento { get; set; } = new Financiamientos();
 
-	public async void Crear()
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+		financiamiento = await financiamientoService.Buscar(financiamientoId);
+	}
+
+	public async void Editar()
 	{
 		await financiamientoService.Crear(financiamiento);
 		await Task.Delay(1000);
