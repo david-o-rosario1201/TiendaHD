@@ -1,6 +1,7 @@
 ﻿@page "/Gastos_Adminstractivos"
 @using TiendaHD.Models
 @inject NavigationManager navigation
+@inject GastosADMServices gastosADMServices
 @rendermode InteractiveServer
 
 <div class="container">
@@ -18,7 +19,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var gasto in GastosADMs)
+            @foreach (var gasto in gastosADM)
             {
                 <tr>
                     <td>@gasto.GastosADMName</td>
@@ -47,17 +48,24 @@
 
 @code {
 
-    public GastosADM gastosADM = new GastosADM();
+    public List<GastosADM> gastosADM = new List<GastosADM>();
+    public bool loading { get; set; } = true;
 
-    private List<GastosADM> GastosADMs = new()
+    protected override async Task OnInitializedAsync()
     {
-        new GastosADM { GastosADMId = 1, GastosADMName = "Alquiler", ValorGastoADM = 20000 },
-        new GastosADM { GastosADMId = 2, GastosADMName = "Internet", ValorGastoADM = 2200 }
-    };
+        await Task.Delay(500);
+        gastosADM = await gastosADMServices.Listar(e => true);
 
-    private float TotalGastos => GastosADMs.Sum(g => g.ValorGastoADM);
+        loading = false;
+
+        if (gastosADM.Count == 0)
+            StateHasChanged();
+    }
+
+    private float TotalGastos => gastosADM.Sum(g => g.ValorGastoADM);
 
     public void EliminarGasto(int Id) { }
+
     public void IrACrear()
     {
         navigation.NavigateTo("/CreateGastosAdminstractivos");

@@ -1,6 +1,7 @@
 ﻿@page "/CreateGastosAdminstractivos"
 @using TiendaHD.Models
 @inject NavigationManager navigation
+@inject GastosADMServices gastosADMServices
 
 <div class="container">
     <div class="card-header">
@@ -27,12 +28,22 @@
 
 @code {
     private GastosADM nuevoGasto = new GastosADM();
-    private void AgregarGasto()
+    public async void AgregarGasto()
     {
         if (!string.IsNullOrWhiteSpace(nuevoGasto.GastosADMName) && nuevoGasto.ValorGastoADM > 0)
         {
-            Console.WriteLine($"Nuevo gasto agregado: {nuevoGasto.GastosADMName}, RD${nuevoGasto.ValorGastoADM}");
+            await gastosADMServices.Crear(nuevoGasto);
+            await Task.Delay(1000);
+            Volver();
+
+            StateHasChanged();
+            await Task.Delay(2000);
         }
+    }
+
+    void Volver()
+    {
+        navigation.NavigateTo("/Gastos_Adminstractivos");
     }
 
 }
