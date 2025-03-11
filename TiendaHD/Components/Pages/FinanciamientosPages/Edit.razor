@@ -1,0 +1,70 @@
+﻿@page "/EditFinanciamientos"
+@page "/EditFinanciamientos/financiamientoId={financiamientoId:int}"
+@rendermode InteractiveServer
+@inject NavigationManager navigation
+@inject FinanciamientoService financiamientoService
+
+<PageTitle>Editar Financiamiento</PageTitle>
+<EditForm Model="financiamiento" OnValidSubmit="Editar">
+	<DataAnnotationsValidator />
+	<div class="container">
+		<div class="card shadow-lg">
+			@*Header*@
+			<div class="card-header">
+				<h3 class="text-center"><strong>Modificar Financiamiento</strong></h3>
+			</div>
+			@*Body*@
+			<div class="card-body">
+				@*Fila #1*@
+				<div class="row mb-3">
+					<div class="col-4">
+						@*Detalle*@
+						<label class="form-label" for="detalle"><strong>Detalle:</strong></label>
+						<InputText id="detalle" class="form-control" @bind-Value="financiamiento.Detalle" placeholder="Ej: Préstamo Personal"></InputText>
+					</div>
+					<div class="col-4">
+						@*CuotaMensual*@
+						<label class="form-label" for="cuotamensual"><strong>Cuota Mensual:</strong></label>
+						<InputNumber id="cuotamensual" class="form-control" @bind-Value="financiamiento.CuotaMensual"></InputNumber>
+					</div>
+				</div>
+			</div>
+			@*Footer*@
+			<div class="card-footer d-flex justify-content-center">
+				<div class="px-2">
+					<button type="button" class="btn btn-outline-danger" @onclick="Volver"><i class="bi bi-box-arrow-left" /> Volver</button>
+				</div>
+				<button type="submit" class="btn btn-outline-dark"><i class="bi bi-floppy-fill" /> Modificar</button>
+			</div>
+		</div>
+	</div>
+</EditForm>
+
+
+@code {
+	[Parameter]
+	public int financiamientoId { get; set; }
+
+	public Financiamientos financiamiento { get; set; } = new Financiamientos();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+		financiamiento = await financiamientoService.Buscar(financiamientoId);
+	}
+
+	public async void Editar()
+	{
+		await financiamientoService.Crear(financiamiento);
+		await Task.Delay(1000);
+		Volver();
+
+		StateHasChanged();
+		await Task.Delay(2000);
+	}
+
+	void Volver()
+	{
+		navigation.NavigateTo("/Financiamientos");
+	}
+}
