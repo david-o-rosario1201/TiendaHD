@@ -1,0 +1,45 @@
+﻿@page "/Gastos_Adminstractivos"
+
+<div class="container">
+    <h2>Gastos Administrativos</h2>
+    <button class="btn btn-danger">➕ Agregar</button>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th>Valor</th>
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var gasto in gastos)
+            {
+                <tr>
+                    <td>@gasto.GastosADMName</td>
+                    <td>RD$@gasto.ValorGastoADM.ToString("N2")</td>
+                    <td>
+                        <button class="btn btn-secondary">👁️</button>
+                        <button class="btn btn-primary">✏️</button>
+                        <button class="btn btn-danger" @onclick="() => EliminarGasto(gasto.GastosADMId)">🗑️</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="alert alert-light text-center">
+        <strong>Total Gastos Administrativos</strong>
+        <h3 class="text-danger">RD$@TotalGastos.ToString("N2")</h3>
+    </div>
+</div>
+
+@code {
+    public GastosADM gastosADM = new GastosADM();
+
+    private List<GastosADM> gastos = new()
+    {
+        new GastosADM { GastosADMId = 1, GastosADMName = "Alquiler", ValorGastoADM = 20000 },
+        new GastosADM { GastosADMId = 2, GastosADMName = "Internet", ValorGastoADM = 2200 }
+    };
+
+    private float TotalGastos => gastos.Sum(g => g.ValorGastoADM);
+}
