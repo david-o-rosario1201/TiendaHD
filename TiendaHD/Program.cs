@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TiendaHD.Components;
 using TiendaHD.DAL;
+using TiendaHD.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddDbContextFactory<Contexto>
         (o => o.UseSqlite(builder.Configuration.GetConnectionString("ConStr")));
+
+builder.Services.AddScoped<FinanciamientoService>();
 
 var app = builder.Build();
 
