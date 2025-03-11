@@ -7,11 +7,11 @@
 <div class="container">
 	<div class="card shadow-lg">
 		@*Header*@
-		<div class="card-header">
-			<div class="card-title">
-				<h1><strong>Financiamientos</strong></h1>
-			</div>
-			<button type="button" class="btn btn-outline-danger" @onclick="IrACrear"><i class="bi bi-plus-circle" /> Agregar</button>
+		<div class="card-header d-flex justify-content-between align-items-center">
+			<h1 class="mb-0"><strong>Financiamientos</strong></h1>
+			<button type="button" class="btn btn-outline-danger d-flex align-items-center" @onclick="IrACrear">
+				<i class="bi bi-plus-circle me-2"></i> Agregar
+			</button>
 		</div>
 		@*Body*@
 		<div class="card-body">
@@ -29,7 +29,7 @@
 			else
 			{
 				<table class="table table-bordered miTabla">
-					<thead>
+					<thead class="table-dark">
 						<tr>
 							@* <th>FinanciamientoId</th> *@
 							<th>Detalle</th>
@@ -67,6 +67,14 @@
 		@*Footer*@
 		<div class="card-footer">
 			<p><strong>Total de Financiamientos:</strong> @financiamientos.Count</p>
+		</div>
+
+		@*Total de Pagos*@
+		<div class="d-flex justify-content-center">
+			<div class="total-financiamientos-container">
+				<h4 class="fw-bold text-danger">Total a Descontar</h4>
+				<h3 class="fw-bold">RD$ @(financiamientos.Sum(e => e.CuotaMensual).ToString("N2"))</h3>
+			</div>
 		</div>
 	</div>
 </div>
