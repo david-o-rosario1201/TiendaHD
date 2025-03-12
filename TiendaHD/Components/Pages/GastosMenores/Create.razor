@@ -1,39 +1,39 @@
-﻿@page "/CreateGastosAdminstractivos"
+﻿@page "/CreateGastosMensuales"
 @using TiendaHD.Models
 @inject NavigationManager navigation
-@inject GastosADMServices gastosADMServices
+@inject GastosMenoresServices gastosMenoresServices
 @rendermode InteractiveServer
 
 <div class="container">
     <div class="card-header">
-        <h2>Nuevo Gasto Administrativo</h2>
+        <h2>Nuevo Gasto Menor</h2>
     </div>
     <div class="formulario">
         <div class="row mb-3 text-center">
             <div class="col-4">
                 <label>Descripción</label>
-                <input type="text" class="form-control" @bind="nuevoGasto.GastosADMName" placeholder="Ej. Alquiler" />
+                <input type="text" class="form-control" @bind="nuevoGasto.GastosMName" placeholder="Ej. Electricidad" />
             </div>
-            
+
             <div class="col-4">
                 <label>Cuota Mensual</label>
-                <input type="number" class="form-control" @bind="nuevoGasto.ValorGastoADM" placeholder="RD.00" />
+                <input type="number" class="form-control" @bind="nuevoGasto.ValorGastosM" placeholder="RD.00" />
             </div>
         </div>
         <div class="card-footer d-flex justify-content-center">
             <button class="btn btn-success" @onclick="AgregarGasto">💵 Guardar</button>
         </div>
-        
+
     </div>
 </div>
 
 @code {
-    private GastosADM nuevoGasto = new GastosADM();
+    private GastosMenores nuevoGasto = new GastosMenores();
     public async void AgregarGasto()
     {
-        if (!string.IsNullOrWhiteSpace(nuevoGasto.GastosADMName) && nuevoGasto.ValorGastoADM > 0)
+        if (!string.IsNullOrWhiteSpace(nuevoGasto.GastosMName) && nuevoGasto.ValorGastosM > 0)
         {
-            await gastosADMServices.Crear(nuevoGasto);
+            await gastosMenoresServices.Crear(nuevoGasto);
             await Task.Delay(1000);
             Volver();
 
@@ -44,7 +44,7 @@
 
     void Volver()
     {
-        navigation.NavigateTo("/Gastos_Adminstractivos");
+        navigation.NavigateTo("/GastosMensuales");
     }
 
 }

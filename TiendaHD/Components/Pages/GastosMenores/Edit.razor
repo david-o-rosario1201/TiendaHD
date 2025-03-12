@@ -1,0 +1,60 @@
+﻿@page "/EditGastosMensuales"
+@page "/EditGastosMensuales/GastoMensualId={GastoMensualId:int}"
+@rendermode InteractiveServer
+@inject NavigationManager navigation
+@inject GastosMenoresServices gastosMenoresServices
+
+<div class="container">
+    <div class="card-header">
+        <h2>Editar Gasto Administrativo</h2>
+    </div>
+    <div class="formulario">
+        <div class="row mb-3 text-center">
+            <div class="col-4">
+                <label>Descripción</label>
+                <input type="text" class="form-control" @bind="nuevoGasto.GastosMName" placeholder="Ej. Electricidad" />
+            </div>
+
+            <div class="col-4">
+                <label>Cuota Mensual</label>
+                <input type="number" class="form-control" @bind="nuevoGasto.ValorGastosM" placeholder="RD.00" />
+            </div>
+        </div>
+        <div class="card-footer d-flex justify-content-center">
+            <button class="btn btn-success" @onclick="AgregarGasto">💵 Guardar</button>
+        </div>
+
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public int GastoMensualId { get; set; }
+    private GastosMenores nuevoGasto = new GastosMenores();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+        nuevoGasto = await gastosMenoresServices.Buscar(GastoMensualId);
+    }
+
+    public async void AgregarGasto()
+    {
+        if (!string.IsNullOrWhiteSpace(nuevoGasto.GastosMName) && nuevoGasto.ValorGastosM > 0)
+        {
+            await gastosMenoresServices.Crear(nuevoGasto);
+            await Task.Delay(1000);
+            Volver();
+
+            StateHasChanged();
+            await Task.Delay(2000);
+        }
+    }
+
+    void Volver()
+    {
+        navigation.NavigateTo("/GastosMensuales");
+    }
+
+}

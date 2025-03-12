@@ -25,8 +25,8 @@
                     <td>@gasto.GastosADMName</td>
                     <td>RD$@gasto.ValorGastoADM.ToString("N2")</td>
                     <td>
-                        <button class="btn btn-secondary">👁️</button>
-                        <button class="btn btn-primary">✏️</button>
+                        <button class="btn btn-secondary" @onclick="() => IrADetalles(gasto.GastosADMId)">👁️</button>
+                        <button class="btn btn-primary" @onclick="() => IrAEditar(gasto.GastosADMId)">✏️</button>
                         <button class="btn btn-danger" @onclick="() => EliminarGasto(gasto.GastosADMId)">🗑️</button>
                     </td>
                 </tr>
@@ -64,8 +64,19 @@
 
     private float TotalGastos => gastosADM.Sum(g => g.ValorGastoADM);
 
-    public void EliminarGasto(int Id) { }
+    public void EliminarGasto(int id) 
+    {
+        navigation.NavigateTo($"/DeleteGastosAdminstractivos/GastoADMID={id}");
+    }
+    public void IrADetalles(int id)
+    {
+        navigation.NavigateTo($"/ViewGastosAdminstractivos/GastoADMID={id}");
+    }
 
+    public void IrAEditar(int id)
+    {
+        navigation.NavigateTo($"/EditGastosAdminstractivos/GastoADMID={id}");
+    }
     public void IrACrear()
     {
         navigation.NavigateTo("/CreateGastosAdminstractivos");
