@@ -1,0 +1,55 @@
+﻿@page "/DeleteGastosAdminstractivos"
+@page "/DeleteGastosMensuales/GastoMensualId={GastoMensualId:int}"
+@rendermode InteractiveServer
+@inject NavigationManager navigation
+@inject GastosMenoresServices gastosMenoresServices
+
+<div class="container">
+	<div class="card-header">
+		<h2>Nuevo Gasto Administrativo</h2>
+	</div>
+	<div class="formulario">
+		<div class="row mb-3 text-center">
+			<ul>
+				<li><strong>Descripci&oacute;n:</strong> @gastosMenores.GastosMName</li>
+				<li><strong>Valor:</strong> RD$ @gastosMenores.ValorGastosM.ToString("N2")</li>
+			</ul>
+		</div>
+		<div class="card-footer d-flex justify-content-center">
+			<button type="button" class="btn btn-outline-dark" @onclick="Eliminar"><i class="bi bi-trash3-fill" /> Eliminar</button>
+		</div>
+
+	</div>
+</div>
+
+
+@code {
+	[Parameter]
+	public int GastoMensualId { get; set; }
+
+	public GastosMenores gastosMenores { get; set; } = new GastosMenores();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+		gastosMenores = await gastosMenoresServices.Buscar(GastoMensualId);
+	}
+
+	public async void Eliminar()
+	{
+		var eliminar = await gastosMenoresServices.Eliminar(GastoMensualId);
+		if (eliminar)
+		{
+			await Task.Delay(1000);
+			Volver();
+		}
+
+		StateHasChanged();
+		await Task.Delay(2000);
+	}
+
+	void Volver()
+	{
+		navigation.NavigateTo("/GastosMensuales");
+	}
+}
