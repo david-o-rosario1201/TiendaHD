@@ -1,0 +1,84 @@
+﻿@page "/Gastos_Adminstractivos"
+@using TiendaHD.Models
+@inject NavigationManager navigation
+@inject GastosMenoresServices gastosMenoresServices
+@rendermode InteractiveServer
+
+<div class="container">
+    <div class="card-header">
+        <h2>Gastos Menores</h2>
+        <button class="btn btn-danger" @onclick="IrACrear">➕ Agregar</button>
+    </div>
+
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th>Valor</th>
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var gasto in gastosMenores)
+            {
+                <tr>
+                    <td>@gasto.GastosMName</td>
+                    <td>RD$@gasto.ValorGastosM.ToString("N2")</td>
+                    <td>
+                        <button class="btn btn-secondary" @onclick="() => IrADetalles(gasto.GastosMId)">👁️</button>
+                        <button class="btn btn-primary" @onclick="() => IrAEditar(gasto.GastosMId)">✏️</button>
+                        <button class="btn btn-danger" @onclick="() => EliminarGasto(gasto.GastosMId)">🗑️</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+    <div class="card-header">
+        <div class="text-center">
+            <strong>Total Gastos Administrativos</strong>
+            <h3 class="text-danger">RD$@TotalGastos.ToString("N2")</h3>
+        </div>
+    </div>
+
+
+
+</div>
+
+@code {
+
+    public List<GastosMenores> gastosMenores = new List<GastosMenores>();
+    public bool loading { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+        gastosMenores = await gastosMenoresServices.Listar(e => true);
+
+        loading = false;
+
+        if (gastosMenores.Count == 0)
+            StateHasChanged();
+    }
+
+    private float TotalGastos => gastosMenores.Sum(g => g.ValorGastosM);
+
+    public void EliminarGasto(int id)
+    {
+        navigation.NavigateTo($"/DeleteGastosAdminstractivos/GastoADMID={id}");
+    }
+    public void IrADetalles(int id)
+    {
+        navigation.NavigateTo($"/ViewGastosAdminstractivos/GastoADMID={id}");
+    }
+
+    public void IrAEditar(int id)
+    {
+        navigation.NavigateTo($"/EditGastosAdminstractivos/GastoADMID={id}");
+    }
+    public void IrACrear()
+    {
+        navigation.NavigateTo("/CreateGastosAdminstractivos");
+    }
+}
