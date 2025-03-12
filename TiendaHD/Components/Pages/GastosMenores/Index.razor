@@ -1,4 +1,4 @@
-﻿@page "/Gastos_Adminstractivos"
+﻿@page "/GastosMensuales"
 @using TiendaHD.Models
 @inject NavigationManager navigation
 @inject GastosMenoresServices gastosMenoresServices
@@ -66,19 +66,19 @@
 
     public void EliminarGasto(int id)
     {
-        navigation.NavigateTo($"/DeleteGastosAdminstractivos/GastoADMID={id}");
+        navigation.NavigateTo($"/DeleteGastosMensuales/GastoMensualId={id}");
     }
     public void IrADetalles(int id)
     {
-        navigation.NavigateTo($"/ViewGastosAdminstractivos/GastoADMID={id}");
+        navigation.NavigateTo($"/ViewGastosMensuales/GastoMensualId={id}");
     }
 
     public void IrAEditar(int id)
     {
-        navigation.NavigateTo($"/EditGastosAdminstractivos/GastoADMID={id}");
+        navigation.NavigateTo($"/EditGastosMensuales/GastoMensualId={id}");
     }
     public void IrACrear()
     {
-        navigation.NavigateTo("/CreateGastosAdminstractivos");
+        navigation.NavigateTo("/CreateGastosMensuales");
     }
 }
