@@ -14,6 +14,7 @@ builder.Services.AddDbContextFactory<Contexto>
 
 builder.Services.AddScoped<FinanciamientoService>();
 builder.Services.AddScoped<EmpleadoService>();
+builder.Services.AddScoped<GastosADMServices>();
 
 var app = builder.Build();
 
