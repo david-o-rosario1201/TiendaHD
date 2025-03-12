@@ -16,4 +16,6 @@ public class Contexto : DbContext
     public DbSet<GastosMenores> GastosMenores { get; set; }
     public DbSet<Ventas> Ventas { get; set; }
 
+	public DbSet<Compras> Compras { get; set; }
+
 }
