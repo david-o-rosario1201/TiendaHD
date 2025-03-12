@@ -266,9 +266,12 @@
 
 	private async Task GenerarVentasMensuales()
 	{
-		await VentaPantalones();
-		await VentaPerfumes();
-		await VentaSweater();
+		if(compra != null)
+		{
+			await VentaPantalones();
+			await VentaPerfumes();
+			await VentaSweater();
+		}
 	}
 
 	private void ActualizarVelocidad(ChangeEventArgs e)
@@ -289,7 +292,7 @@
 	{
 		Ventas vent = new Ventas();
 		vent.Articulo = "Pantalones";
-		vent.Cantidad = 10;
+		vent.Cantidad = random.Next(1,1000);
 		vent.Precio = (decimal)CalcularBeneficioPantalones();
 		vent.Total = vent.Cantidad * vent.Precio;
 
@@ -316,6 +319,7 @@
 		return Costo;
 	}
 
+
 	public double CalcularBeneficioPantalones()
 	{
 		var costo = (double)CalcularCostoPantalones();
@@ -329,7 +333,7 @@
 		Ventas vent = new Ventas();
 
 		vent.Articulo = "Perfumes";
-		vent.Cantidad = 10;
+		vent.Cantidad = random.Next(1, 1000);
 		vent.Precio = (decimal)CalcularBeneficioPerfumes();
 		vent.Total = vent.Cantidad * vent.Precio;
 
@@ -355,6 +359,7 @@
 		return Costo;
 	}
 
+
 	public double CalcularBeneficioPerfumes()
 	{
 		var costo = (double)CalcularCostoPerfumes();
@@ -368,7 +373,7 @@
 		Ventas vent = new Ventas();
 
 		vent.Articulo = "Sweater";
-		vent.Cantidad = 10;
+		vent.Cantidad = random.Next(1, 1000);
 		vent.Precio = (decimal)CalcularBeneficioSweater();
 		vent.Total = vent.Cantidad * vent.Precio;
 
@@ -393,6 +398,7 @@
 		var Costo = ArticuloCostoGastos / compra.CantidadSweater;
 		return Costo;
 	}
+
 
 	public double CalcularBeneficioSweater()
 	{
