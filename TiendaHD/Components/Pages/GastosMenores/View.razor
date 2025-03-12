@@ -1,0 +1,42 @@
+﻿@page "/ViewGastosMensuales"
+@page "/ViewGastosMensuales/GastoMensualId={GastoMensualId:int}"
+@rendermode InteractiveServer
+@inject NavigationManager navigation
+@inject GastosMenoresServices gastosMenoresServices
+
+<div class="container">
+	<div class="card-header">
+		<h2>Ver Gasto Administrativo</h2>
+	</div>
+	<div class="formulario">
+		<div class="row mb-3 text-center">
+			<ul>
+				<li><strong>Descripci&oacute;n:</strong> @gastoMenor.GastosMName</li>
+				<li><strong>Valor:</strong> RD$ @gastoMenor.ValorGastosM.ToString("N2")</li>
+			</ul>
+		</div>
+		<div class="card-footer d-flex justify-content-center">
+			<button type="button" class="btn btn-outline-danger" @onclick="Volver"><i class="bi bi-box-arrow-left" /> Volver</button>
+		</div>
+
+	</div>
+</div>
+
+
+@code {
+	[Parameter]
+	public int GastoMensualId { get; set; }
+
+	public GastosMenores gastoMenor { get; set; } = new GastosMenores();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+		gastoMenor = await gastosMenoresServices.Buscar(GastoMensualId);
+	}
+
+	void Volver()
+	{
+		navigation.NavigateTo("/GastosMensuales");
+	}
+}
