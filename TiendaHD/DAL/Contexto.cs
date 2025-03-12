@@ -18,4 +18,8 @@ public class Contexto : DbContext
 
 	public DbSet<Compras> Compras { get; set; }
 
+    public DbSet<Poblacion> Poblacion {  get; set; }
+
+    public DbSet<CostoVentas> CostoVentas { get; set; }
+
 }

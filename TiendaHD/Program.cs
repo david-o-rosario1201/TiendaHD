@@ -18,6 +18,8 @@ builder.Services.AddScoped<GastosADMServices>();
 builder.Services.AddScoped<GastosMenoresServices>();
 builder.Services.AddScoped<VentasServices>();
 builder.Services.AddScoped<CompraService>();
+builder.Services.AddScoped<PoblacionService>();
+builder.Services.AddScoped<CostoVentaService>();
 
 var app = builder.Build();
 
