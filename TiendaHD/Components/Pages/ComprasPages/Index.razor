@@ -1,0 +1,122 @@
+﻿@page "/Compras"
+@rendermode InteractiveServer
+@inject NavigationManager navigation
+@inject CompraService compraService
+
+<PageTitle>Compras</PageTitle>
+<div class="container">
+	<div class="card shadow-lg">
+		@*Header*@
+		<div class="card-header d-flex justify-content-between align-items-center">
+			<h1 class="mb-0"><strong>Compras</strong></h1>
+			<button type="button" class="btn btn-outline-danger d-flex align-items-center" @onclick="IrACrear">
+				<i class="bi bi-plus-circle me-2"></i> Agregar
+			</button>
+		</div>
+		@*Body*@
+		<div class="card-body">
+			@if (loading)
+			{
+				<div class="d-flex justify-content-center">
+					<div class="spinner-border text-info">
+					</div>
+				</div>
+			}
+			else if (compra == null)
+			{
+				<h1 class="miMensaje text-center"><i class="bi bi-exclamation-triangle" /> No hay compras creadas</h1>
+			}
+			else
+			{
+				<table class="table table-bordered miTabla">
+					<thead class="table-dark">
+						<tr>
+							<th>Producto</th>
+							<th>Cantidad</th>
+							<th>Precio</th>
+							<th>Subtotal</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Pantalones</td>
+							<td>@compra.CantidadPantalones</td>
+							<td>@compra.PrecioPantalones</td>
+							<td>@Subtotal(compra.PrecioPantalones, compra.CantidadPantalones)</td>
+						</tr>
+						<tr>
+							<td>Perfumes</td>
+							<td>@compra.CantidadPerfumes</td>
+							<td>@compra.PrecioPerfumes</td>
+							<td>@Subtotal(compra.PrecioPerfumes, compra.CantidadPerfumes)</td>
+						</tr>
+						<tr>
+							<td>Sweater</td>
+							<td>@compra.CantidadSweater</td>
+							<td>@compra.PrecioSweater</td>
+							<td>@Subtotal(compra.PrecioSweater, compra.CantidadSweater)</td>
+						</tr>
+					</tbody>
+				</table>
+			}
+		</div>
+
+		@*Total de Pagos*@
+		<div class="d-flex justify-content-center">
+			<div class="total-empleados-container">
+				<h4 class="fw-bold text-danger">Total Compras</h4>
+				<h3 class="fw-bold">
+					RD$ @Total().ToString("N2")
+				</h3>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	public Compras compra = new Compras();
+	public string mensaje { get; set; }
+	public bool loading { get; set; } = true;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+		compra = await compraService.Buscar(1);
+
+		loading = false;
+
+		if (compra == null)
+			StateHasChanged();
+	}
+
+	private decimal Subtotal(decimal precio, int cantidad) => precio * cantidad;
+
+	private decimal Total()
+	{
+		return
+		(compra.CantidadPantalones * compra.PrecioPantalones) +
+		(compra.CantidadPerfumes * compra.PrecioPerfumes) +
+		(compra.CantidadSweater * compra.PrecioSweater);
+
+	}
+
+	public void IrACrear()
+	{
+		navigation.NavigateTo("/CreateCompras");
+	}
+
+	public void IrADetalles(int id)
+	{
+		navigation.NavigateTo($"/ViewCompras/compraId={id}");
+	}
+
+	public void IrAEditar(int id)
+	{
+		navigation.NavigateTo($"/EditCompras/compraId={id}");
+	}
+
+	public void IrAEliminar(int id)
+	{
+		navigation.NavigateTo($"/DeleteCompras/compraId={id}");
+	}
+}

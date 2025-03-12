@@ -1,0 +1,23 @@
+﻿﻿﻿﻿.miMensaje {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.miTabla {
+    text-align: center;
+}
+
+.miFlecha {
+    margin-top: 10px;
+}
+
+.total-empleados-container {
+    background-color: #f2f2f2; /* Color de fondo */
+    border-radius: 20px; /* Bordes redondeados */
+    padding: 20px; /* Espaciado interno */
+    text-align: center; /* Centrar el texto */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    width: 80%; /* Ajustar ancho */
+    margin: 20px auto; /* Centrar horizontalmente */
+    font-size: 1.2rem;
+}
