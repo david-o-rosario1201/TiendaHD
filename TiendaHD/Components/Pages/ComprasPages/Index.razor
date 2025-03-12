@@ -93,10 +93,14 @@
 
 	private decimal Total()
 	{
-		return
-		(compra.CantidadPantalones * compra.PrecioPantalones) +
-		(compra.CantidadPerfumes * compra.PrecioPerfumes) +
-		(compra.CantidadSweater * compra.PrecioSweater);
+		if(compra != null)
+		{
+			return (compra.CantidadPantalones * compra.PrecioPantalones) +
+			(compra.CantidadPerfumes * compra.PrecioPerfumes) +
+			(compra.CantidadSweater * compra.PrecioSweater);
+		}
+
+		return 0;
 
 	}
 

@@ -1,7 +1,379 @@
 ﻿@page "/"
+@rendermode InteractiveServer
+@inject NavigationManager navigation
+@inject CompraService compraService
+@inject EmpleadoService empleadoService
+@inject FinanciamientoService financiamientoService
+@inject GastosADMServices gastosADMServices
+@inject GastosMenoresServices gastosMenoresServices
+@inject VentasServices ventasServices
+@inject PoblacionService poblacionService
+@inject CostoVentaService costoVentaService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Consolidaci&oacute;n</PageTitle>
+<div class="container">
+	<div class="card shadow-lg">
+		@*Header*@
+		<div class="card-header">
+			<h3 class="text-center"><strong>Consolidaci&oacute;n</strong></h3>
+		</div>
 
-<h1>Hello, world!</h1>
+		<div class="text-center">
+			Mes #1
+		</div>
 
-Welcome to your new app.
+		@*Body*@
+		<div class="card-body">
+			@*Datos*@
+			<div class="row mb-3">
+				<div class="col-6">
+					<table class="table table-bordered miTabla">
+						<thead>
+							<tr>
+								<th>Cantidad</th>
+								<th>Art&iacute;culo</th>
+								<th>Precio</th>
+								<th>Total</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var venta in ventas)
+							{
+								<tr>
+									<td>@venta.Cantidad</td>
+									<td>@venta.Articulo</td>
+									<td>RD$ @venta.Precio.ToString("N2")</td>
+									<td>RD$ @venta.Total.ToString("N2")</td>
+								</tr>
+							}
+						</tbody>
+						<tfoot>
+							<tr style="background-color: #f8d7da; font-weight: bold; color: #721c24; font-size: 1.2em;">
+								<td colspan="3" style="text-align: right;">Total</td>
+								<td style="background-color: #dc3545; color: white; text-align: center; font-size: 1.3em; font-weight: bold;">
+									RD$ @ventas.Sum(v => v.Total).ToString("N2")
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+
+
+				</div>
+
+				<div class="col-6">
+					<table class="table table-bordered miTabla">
+						<thead>
+							<tr>
+								<th>Costos</th>
+								<th>Total</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var costosVenta in costosVentas)
+							{
+								<tr>
+									<td>RD$ @costosVenta.Costo.ToString("N2")</td>
+									<td>RD$ @costosVenta.Total.ToString("N2")</td>
+								</tr>
+							}
+						</tbody>
+						<tfoot>
+							<tr style="background-color: #f8d7da; font-weight: bold; color: #721c24; font-size: 1.2em;">
+								<td colspan="1" style="text-align: right;">Total</td>
+								<td style="background-color: #dc3545; color: white; text-align: center; font-size: 1.3em; font-weight: bold;">
+									RD$ @costosVentas.Sum(c => c.Total).ToString("N2")
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+
+				</div>
+			</div>
+
+			@*Otro*@
+			<div class="row mb-3">
+				<div class="col-4">
+					<table class="table table-bordered text-center">
+						<thead>
+							<tr class="bg-light">
+								<th colspan="2" class="fw-bold fs-5">Gastos</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Gastos Personales</td>
+								<td>RD$ @(empleados != null && empleados.Any() ? empleados.Sum(g => g.Salario).ToString("N2") : 0.00)</td>
+							</tr>
+							<tr>
+								<td>Gastos Administrativos</td>
+								<td>RD$ @(gastosADMs != null && gastosADMs.Any() ? gastosADMs.Sum(g => g.ValorGastoADM).ToString("N2") : 0.00)</td>
+							</tr>
+							<tr>
+								<td>Gastos Menores</td>
+								<td>RD$ @(gastosMenores != null && gastosMenores.Any() ? gastosMenores.Sum(g => g.ValorGastosM).ToString("N2") : 0.00)</td>
+							</tr>
+							<tr>
+								<td>Financiamiento</td>
+								<td>RD$ @(financiamientos != null && financiamientos.Any() ? financiamientos.Sum(g => g.CuotaMensual).ToString("N2") : 0.00)</td>
+							</tr>
+							<!-- Fila para el total de los gastos -->
+							<tr style="background-color: #f8d7da; font-weight: bold; color: #721c24; font-size: 1.2em;">
+								<td class="text-start">Total Gastos</td>
+								<td style="background-color: #dc3545; color: white; text-align: center; font-size: 1.3em; font-weight: bold;">
+									RD$ @Total().ToString("N2")
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+
+			<div class="d-flex justify-content-center">
+				<div class="border rounded p-4 text-center" style="width: 700px;">
+					<h4 class="fw-bold mb-4">Totales</h4>
+
+					<div class="mt-3">
+						<p class="fw-bold fs-5 text-secondary">Beneficios Brutos</p>
+						<p class="text-danger fw-bold fs-3">RD$ @CalcularBeneficioBruto().ToString("N2")</p>
+					</div>
+
+					<div class="mt-3">
+						<p class="fw-bold fs-5 text-secondary">Beneficios Netos</p>
+						<p class="text-danger fw-bold fs-3">RD$ @CalcularBeneficioNeto().ToString("N2")</p>
+					</div>
+
+					<div class="mt-3">
+						<p class="fw-bold fs-5 text-secondary">Porcentaje de Gastos</p>
+						<p class="text-danger fw-bold fs-3">RD$ @Total().ToString("N2")</p>
+					</div>
+
+					<div class="mt-3">
+						<p class="fw-bold fs-5 text-secondary">Beneficios Brutos / Porcentaje de Gastos</p>
+						<p class="text-danger fw-bold fs-2">@CalcularPorcentajeGastosBeneficios().ToString("N2")%</p>
+					</div>
+				</div>
+			</div>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+
+@code {
+	public List<Ventas> ventas = new List<Ventas>();
+	public List<Compras> compras = new List<Compras>();
+	public List<Empleados> empleados = new List<Empleados>();
+	public List<Financiamientos> financiamientos = new List<Financiamientos>();
+	public List<CostoVentas> costosVentas = new List<CostoVentas>();
+	public List<TiendaHD.Models.GastosADM> gastosADMs = new List<TiendaHD.Models.GastosADM>();
+	public List<TiendaHD.Models.GastosMenores> gastosMenores = new List<TiendaHD.Models.GastosMenores>();
+
+	public Random random = new Random();
+	public int poblacion = 150000;
+	public int poblacionCompradora = 0;
+
+	public Financiamientos financiamiento { get; set; } = new Financiamientos();
+	public Poblacion poblacionNew { get; set; } = new Poblacion();
+	public Ventas venta { get; set; } = new Ventas();
+	public Compras compra { get; set; } = new Compras();
+	public CostoVentas costoVenta { get; set; } = new CostoVentas();
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+		ventas = await ventasServices.Listar(e => true);
+		gastosADMs = await gastosADMServices.Listar(e => true);
+		gastosMenores = await gastosMenoresServices.Listar(e => true);
+		empleados = await empleadoService.Listar(e => true);
+		financiamientos = await financiamientoService.Listar(e => true);
+		costosVentas = await costoVentaService.Listar(e => true);
+		compra = await compraService.Buscar(1);
+
+		// poblacionCompradora = random.Next(1, 150000);
+
+		// poblacionNew.PoblacionCompradora = poblacionCompradora;
+
+		// await poblacionService.Crear(poblacionNew);
+
+		if(compra != null)
+		{
+			// await VentaPantalones();
+			// await VentaPerfumes();
+			// await VentaSweater();
+		}
+	}
+
+	//Pantalones
+	public async Task VentaPantalones()
+	{
+		Ventas vent = new Ventas();
+		vent.Articulo = "Pantalones";
+		vent.Cantidad = 10;
+		vent.Precio = (decimal)CalcularBeneficioPantalones();
+		vent.Total = vent.Cantidad * vent.Precio;
+
+		await ventasServices.Crear(vent);
+
+
+		CostoVentas costosVent = new CostoVentas();
+
+		costosVent.Costo = CalcularCostoPantalones();
+		costosVent.Total = costosVent.Costo * vent.Cantidad;
+
+		await costoVentaService.Crear(costosVent);
+	}
+
+	public decimal CalcularCostoPantalones()
+	{
+		var gastosTotales = GastosTotales();
+		var porcentajeCostoProducto = gastosTotales == 0
+			? 0
+			: (compra.CantidadPantalones * compra.PrecioPantalones) / gastosTotales;
+		var CostosGastos = porcentajeCostoProducto * (decimal)Total();
+		var ArticuloCostoGastos = (compra.CantidadPantalones * compra.PrecioPantalones) + CostosGastos;
+		var Costo = ArticuloCostoGastos / compra.CantidadPantalones;
+		return Costo;
+	}
+
+	public double CalcularBeneficioPantalones()
+	{
+		var costo = (double)CalcularCostoPantalones();
+		var beneficio = (costo * 0.30) + costo;
+		return beneficio;
+	}
+
+	//Perfumes
+	public async Task VentaPerfumes()
+	{
+		Ventas vent = new Ventas();
+
+		vent.Articulo = "Perfumes";
+		vent.Cantidad = 10;
+		vent.Precio = (decimal)CalcularBeneficioPerfumes();
+		vent.Total = vent.Cantidad * vent.Precio;
+
+		await ventasServices.Crear(vent);
+
+		CostoVentas costosVent = new CostoVentas();
+
+		costosVent.Costo = CalcularCostoPerfumes();
+		costosVent.Total = costosVent.Costo * vent.Cantidad;
+
+		await costoVentaService.Crear(costosVent);
+	}
+
+	public decimal CalcularCostoPerfumes()
+	{
+		var gastosTotales = GastosTotales();
+		var porcentajeCostoProducto = gastosTotales == 0
+			? 0
+			: (compra.CantidadPerfumes * compra.PrecioPerfumes) / gastosTotales;
+		var CostosGastos = porcentajeCostoProducto * (decimal)Total();
+		var ArticuloCostoGastos = (compra.CantidadPerfumes * compra.PrecioPerfumes) + CostosGastos;
+		var Costo = ArticuloCostoGastos / compra.CantidadPerfumes;
+		return Costo;
+	}
+
+	public double CalcularBeneficioPerfumes()
+	{
+		var costo = (double)CalcularCostoPerfumes();
+		var beneficio = (costo * 0.30) + costo;
+		return beneficio;
+	}
+
+	//Sweater
+	public async Task VentaSweater()
+	{
+		Ventas vent = new Ventas();
+
+		vent.Articulo = "Sweater";
+		vent.Cantidad = 10;
+		vent.Precio = (decimal)CalcularBeneficioSweater();
+		vent.Total = vent.Cantidad * vent.Precio;
+
+		await ventasServices.Crear(vent);
+
+		CostoVentas costosVent = new CostoVentas();
+
+		costosVent.Costo = CalcularCostoSweater();
+		costosVent.Total = costosVent.Costo * vent.Cantidad;
+
+		await costoVentaService.Crear(costosVent);
+	}
+
+	public decimal CalcularCostoSweater()
+	{
+		var gastosTotales = GastosTotales();
+		var porcentajeCostoProducto = gastosTotales == 0
+			? 0
+			: (compra.CantidadSweater * compra.PrecioSweater) / gastosTotales;
+		var CostosGastos = porcentajeCostoProducto * (decimal)Total();
+		var ArticuloCostoGastos = (compra.CantidadSweater * compra.PrecioSweater) + CostosGastos;
+		var Costo = ArticuloCostoGastos / compra.CantidadSweater;
+		return Costo;
+	}
+
+	public double CalcularBeneficioSweater()
+	{
+		var costo = (double)CalcularCostoSweater();
+		var beneficio = (costo * 0.30) + costo;
+		return beneficio;
+	}
+
+	private decimal GastosTotales()
+	{
+		if (compra == null)
+			return 0;
+
+		return
+		(compra.CantidadPantalones * compra.PrecioPantalones) +
+		(compra.CantidadPerfumes * compra.PrecioPerfumes) +
+		(compra.CantidadSweater * compra.PrecioSweater);
+	}
+
+	private decimal CalcularBeneficioBruto()
+	{
+		var totalVentas = ventas.Sum(v => v.Total);
+		var totalCostos = costosVentas.Sum(v => v.Total);
+		return totalVentas - (decimal)totalCostos;
+	}
+
+	private decimal CalcularBeneficioNeto()
+	{
+		var beneficioBruto = CalcularBeneficioBruto();
+		var totalGastos = Total();
+		return beneficioBruto - (decimal)totalGastos;
+	}
+
+	private decimal CalcularPorcentajeGastosBeneficios()
+	{
+		var beneficioNeto = CalcularBeneficioBruto();
+		var totalGastos = (decimal)Total();
+		//var gastosTotales = GastosTotales();
+
+		// Comprobar si los gastos totales son cero
+		if (totalGastos == 0)
+		{
+			return 0;
+		}
+
+		return 1 - (beneficioNeto / totalGastos);
+	}
+
+
+	public double Total()
+	{
+		var a =
+			(empleados != null && empleados.Any() ? Convert.ToDouble(empleados.Sum(g => g.Salario)) : 0.00) +
+			(gastosADMs != null && gastosADMs.Any() ? Convert.ToDouble(gastosADMs.Sum(g => g.ValorGastoADM)) : 0.00) +
+			(gastosMenores != null && gastosMenores.Any() ? Convert.ToDouble(gastosMenores.Sum(g => g.ValorGastosM)) : 0.00) +
+			(financiamientos != null && financiamientos.Any() ? Convert.ToDouble(financiamientos.Sum(g => g.CuotaMensual)) : 0.00);
+		return a;
+	}
+}
